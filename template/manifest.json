@@ -1,0 +1,13 @@
+{
+  "icon": "Package",
+  "type": "iframe",
+  "url": "https://seu-modulo.meuhub.app/",
+  "overlay": false,
+  "global": false,
+  "version": "1.0.0",
+  "description": "Descrição do seu módulo",
+  "permissions": [
+    "read:items",
+    "write:items"
+  ]
+}
