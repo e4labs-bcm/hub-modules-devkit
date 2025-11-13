@@ -1,9 +1,9 @@
 # CLAUDE.md - Hub Modules DevKit
 
 **Projeto**: Kit de desenvolvimento para criar módulos do Hub.app
-**Status**: 🚧 **Em Implementação - Fases 1-4, 7 Completas (70% concluído)**
+**Status**: 🚧 **Em Implementação - Fases 1-5, 7 Completas (80% concluído)**
 **Repositório**: https://github.com/e4labs-bcm/hub-modules-devkit
-**Última Atualização**: 13/11/2025 - 21:30 UTC
+**Última Atualização**: 13/11/2025 - 22:30 UTC
 
 ---
 
@@ -345,30 +345,57 @@ Todos os arquivos têm comentários `// ADICIONE SEUS CAMPOS PERSONALIZADOS AQUI
 
 ---
 
-### **Fase 5: Converter para Node.js** ⏸️ Pendente (2h)
+### **Fase 5: Converter para Node.js** ✅ COMPLETA (1h40min)
+
+**Commitado**: `d7588de` - 13/11/2025
 
 **Objetivo**: Reescrever scripts Bash → Node.js (cross-platform)
 
-**Conversões necessárias**:
-- [ ] `scripts/create-module.sh` → `lib/create-module.js`
-- [ ] `scripts/install-module.sh` → `lib/install-module.js`
-- [ ] `scripts/setup-database.sh` → `lib/setup-database.js`
+**Conversões realizadas**:
+- [x] `scripts/create-module.sh` → `lib/create-module.js` (620 linhas) ✅
+  - Cria estrutura de diretórios completa
+  - Copia templates funcionais (CRUD completo)
+  - Gera arquivos estáticos (main.tsx, vite.config.ts, tsconfig.json, etc)
+  - Cria migration SQL com triggers e RLS
+  - Cria README.md completo
+  - Instala dependências via npm
+  - Cross-platform: Windows, macOS, Linux
 
-**CLI Entry Point** (`cli.js`):
-```javascript
-#!/usr/bin/env node
-const { program } = require('commander');
+- [x] `scripts/install-module.sh` → `lib/install-module.js` (550 linhas) ✅
+  - Aplica migration SQL via psql (child_process)
+  - Registra módulo no banco PostgreSQL
+  - Cria API routes (2 arquivos TypeScript)
+  - Atualiza Prisma schema (append model)
+  - Regenera Prisma Client
+  - Multi-tenancy completo
+  - Cross-platform: Windows, macOS, Linux
 
-program
-  .command('create <slug> <title> <icon>')
-  .action(require('./lib/create-module'));
+- [x] CLI Entry Point: `cli.js` (70 linhas) ✅
+  - Commander.js para parsing de argumentos
+  - Comandos: create, install
+  - Aliases globais: hubapp-devkit, hubapp
+  - Help customizado com exemplos práticos
+  - Version flag (-V)
 
-program
-  .command('install <slug>')
-  .action(require('./lib/install-module'));
+**package.json atualizado**:
+- Campo `bin` adicionado (hubapp-devkit, hubapp)
+- Dependências: `chalk@4.1.2`, `commander@11.1.0`
+- Scripts npm: `create:module`, `install:module`
 
-program.parse();
+**Uso**:
+```bash
+# Instalar globalmente
+npm install -g @hubapp/devkit
+
+# Criar módulo
+hubapp-devkit create tarefas "Tarefas" ListTodo
+
+# Instalar no Hub.app
+cd ~/hub-app-nextjs
+hubapp-devkit install tarefas "Tarefas" ListTodo
 ```
+
+**Nota**: Scripts Bash originais ainda disponíveis como fallback
 
 ---
 
