@@ -644,7 +644,7 @@ npm run sync:all
 
 ### **Fase 8: Sistema de Atualização** ✅ COMPLETA (1h40min)
 
-**Commitado**: `[pendente]` - 14/11/2025
+**Commitado**: `5d0eef1` - 14/11/2025
 
 **Objetivo**: Atualizar DevKit facilmente sem perder compatibilidade - CONCLUÍDO! ✅
 
@@ -1020,15 +1020,15 @@ bash /path/to/hub-modules-devkit/scripts/install-module.sh tarefas "Tarefas" Lis
 
 ## 🔄 **Histórico de Commits Importantes**
 
+- `5d0eef1` - feat: Sistema de Atualização Completo (Fase 8) ✅ (14/11/2025) ⭐ NOVO!
+- `484bbe7` - docs: Ajustar filosofia - 'Make it right' antes de 'make it work' (14/11/2025)
+- `851116f` - feat: Context para Claude Code (Fase 6) ✅ (13/11/2025)
+- `d7588de` - feat: Converter Scripts para Node.js (Fase 5) ✅ (13/11/2025)
 - `510c701` - feat: Sistema de Sincronização Hub↔DevKit (Fase 7) ✅ (13/11/2025) 🔴 CRÍTICO!
 - `baac89e` - feat: App.tsx Funcional com CRUD Completo (Fase 4) ✅ (13/11/2025) 🔴 CRÍTICO!
 - `cd51ac7` - feat: Sistema de Migrations Completo (Fase 3) ✅ (13/11/2025)
-- `9693f89` - feat: Scripts de Setup Nativos (Fase 2 - 90%) ✅ (13/11/2025)
-- `a8ec27f` - docs: Criar CLAUDE.md completo do projeto (13/11/2025)
+- `96e7579` - feat: Scripts de Setup Linux e Windows (Fase 2) ✅ (13/11/2025)
 - `b194d01` - fix: Corrigir 3 bugs críticos (Fase 1) ✅ (13/11/2025)
-- `3d0b8fd` - docs: Sistema de sincronização Hub↔DevKit (13/11/2025)
-- `f5dcdbf` - docs: Sistema de atualização completo (13/11/2025)
-- `c7b45ff` - docs: Planejamento finalizado (13/11/2025)
 
 ---
 
