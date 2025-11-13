@@ -1,0 +1,6 @@
+# Backups (não versionar)
+*.backup.*
+*.tmp
+
+# Manter arquivos SQL principais versionados
+!*.sql
