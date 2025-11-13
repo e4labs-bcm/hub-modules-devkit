@@ -861,13 +861,106 @@ Se houver PRD:
 
 ---
 
-### Fase 7: Documentação (1h)
+### Fase 7: Sistema de Atualização Completo (1h 30min)
 
-**7.1 DATABASE_SETUP.md**
-**7.2 MIGRATIONS.md**
-**7.3 DEPLOYMENT.md**
-**7.4 Atualizar README.md**
-**7.5 Atualizar QUICK_START.md**
+**7.1 Comando `hub-devkit update`**
+```javascript
+// lib/update.js
+async function update() {
+  // 1. Fetch latest release from GitHub API
+  // 2. Compare com versão atual (package.json)
+  // 3. Se breaking change (major version), mostrar CHANGELOG
+  // 4. Pedir confirmação
+  // 5. Executar git pull origin main
+  // 6. Mostrar resumo do que mudou
+}
+```
+
+**7.2 Comando `hub-devkit rollback`**
+```javascript
+// lib/rollback.js
+async function rollback() {
+  // 1. Listar últimas 5 versões (git tag)
+  // 2. Mostrar versão atual
+  // 3. Deixar escolher qual voltar
+  // 4. git checkout <version>
+  // 5. Avisar que está em "detached HEAD"
+}
+```
+
+**7.3 Comando `hub-devkit check-updates`**
+```javascript
+// lib/check-updates.js
+async function checkUpdates() {
+  // 1. Fetch GitHub API
+  // 2. Comparar versões (semver)
+  // 3. Mostrar: patch (bugfix), minor (feature), major (breaking)
+  // 4. Sugerir: "Execute 'hub-devkit update'"
+}
+```
+
+**7.4 Auto-check em todo comando**
+```javascript
+// cli.js (no início de TODOS os comandos)
+const { autoCheckUpdates } = require('./lib/check-updates');
+
+// Executa em background (não bloqueia)
+autoCheckUpdates().then(hasUpdate => {
+  if (hasUpdate) {
+    console.log('\nℹ️  Nova versão disponível. Execute: hub-devkit update\n');
+  }
+});
+```
+
+**7.5 CHANGELOG.md tracking**
+```markdown
+# CHANGELOG.md
+
+## [Unreleased]
+
+## [2.0.0] - 2025-11-20 ⚠️ BREAKING
+### Breaking Changes
+- Mudança na API de criação
+
+### Migration Guide
+```bash
+# v1.x
+hub-devkit create tasks "Tasks" ListTodo
+
+# v2.x
+hub-devkit create tasks "Tasks" ListTodo --type=crud
+```
+
+## [1.1.0] - 2025-11-15
+### Features
+- Suporte para campos customizados
+
+## [1.0.0] - 2025-11-13
+### Initial Release
+```
+
+**7.6 package.json com version tracking**
+```json
+{
+  "name": "hub-modules-devkit",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:e4labs-bcm/hub-modules-devkit.git"
+  }
+}
+```
+
+---
+
+### Fase 8: Documentação (1h)
+
+**8.1 DATABASE_SETUP.md**
+**8.2 MIGRATIONS.md**
+**8.3 DEPLOYMENT.md**
+**8.4 UPDATE_GUIDE.md** (novo!)
+**8.5 Atualizar README.md**
+**8.6 Atualizar QUICK_START.md**
 
 ---
 
@@ -879,10 +972,11 @@ Se houver PRD:
 | 2 | Scripts de setup nativos | 1h 30min |
 | 3 | Sistema de migrations | 1h |
 | 4 | App.tsx funcional | 2h 30min |
-| 5 | Converter para NPM | 2h |
+| 5 | Converter para Node.js | 2h |
 | 6 | Context para Claude | 1h |
-| 7 | Documentação | 1h |
-| **TOTAL** | | **~10 horas** |
+| 7 | Sistema de atualização | 1h 30min |
+| 8 | Documentação | 1h |
+| **TOTAL** | | **~11h 30min** |
 
 ---
 
