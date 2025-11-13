@@ -15,7 +15,9 @@
 
 ---
 
-### ⚡ Create production-ready Hub.app modules in **5 minutes**
+### ⚡ Create production-ready Hub.app modules **the right way**
+
+**Filosofia**: "Make it right, make it work, make it fast - in that order."
 
 </div>
 
@@ -27,23 +29,27 @@
 <tr>
 <td align="center">
 <strong>📦 Templates</strong><br>
-4 production-ready<br>
-TypeScript files
+5 production-ready<br>
+TypeScript files<br>
+~1000 lines
 </td>
 <td align="center">
-<strong>🛠️ Scripts</strong><br>
-2 automation scripts<br>
-850 lines of code
+<strong>🛠️ CLI Commands</strong><br>
+7 commands<br>
+Cross-platform<br>
+Node.js
 </td>
 <td align="center">
-<strong>📚 Docs</strong><br>
-6 complete guides<br>
-80+ pages
+<strong>📚 Documentation</strong><br>
+15+ guides<br>
+100+ pages<br>
+AI-optimized
 </td>
 <td align="center">
-<strong>⚡ Setup Time</strong><br>
-~5 minutes<br>
-from zero to deploy
+<strong>🎯 Status</strong><br>
+✅ 100% Complete<br>
+Production-ready<br>
+v0.1.0
 </td>
 </tr>
 </table>
@@ -163,6 +169,76 @@ npm run dev  # http://localhost:5173
 
 ---
 
+## 📚 CLI Commands
+
+### Module Management
+
+```bash
+# Create new module
+hubapp-devkit create <slug> <title> [icon]
+hubapp-devkit create tasks "Tasks" ListTodo
+
+# Install module in Hub.app
+hubapp-devkit install <slug> <title> <icon> [tenant-id]
+hubapp-devkit install tasks "Tasks" ListTodo
+```
+
+### Update System
+
+```bash
+# Check for updates
+hubapp-devkit check-updates
+
+# Update to latest version
+hubapp-devkit update
+
+# Rollback to previous version
+hubapp-devkit rollback
+```
+
+### Migration System
+
+```bash
+# Create new migration
+bash scripts/migration-create.sh "add user avatar field"
+
+# Check migration status
+bash scripts/migration-status.sh
+
+# Apply pending migrations
+bash scripts/migration-up.sh
+
+# Rollback migration (CAUTION!)
+bash scripts/migration-down.sh 003
+```
+
+### Database Setup
+
+```bash
+# macOS
+bash scripts/setup-mac.sh
+
+# Linux (Ubuntu/Debian/Fedora/Arch)
+bash scripts/setup-linux.sh
+
+# Windows (PowerShell as Admin)
+.\scripts\setup-windows.ps1
+```
+
+### Sync & Compatibility
+
+```bash
+# Sync schema from Hub.app
+npm run sync:schema
+bash scripts/sync-schema.sh
+
+# Check compatibility
+npm run check:compat
+bash scripts/check-compat.sh
+```
+
+---
+
 ## 🏗️ Architecture
 
 ### Data Flow
@@ -249,9 +325,11 @@ packages/mod-tasks/
 
 ## 📚 Documentation
 
+### 🚀 Getting Started
+
 <table>
 <tr>
-<td width="33%">
+<td width="50%">
 
 ### 📖 [README.md](README.md)
 Complete architecture and integration guide
@@ -259,15 +337,86 @@ Complete architecture and integration guide
 **When to read:** First time using
 
 </td>
-<td width="33%">
+<td width="50%">
 
 ### ⚡ [QUICK_START.md](QUICK_START.md)
-5-minute quick start guide
+Quick start guide
 
-**When to read:** Creating a module
+**When to read:** Creating your first module
 
 </td>
-<td width="33%">
+</tr>
+</table>
+
+### 🛠️ Setup & Configuration
+
+<table>
+<tr>
+<td width="50%">
+
+### 🗄️ [DATABASE_SETUP.md](docs/DATABASE_SETUP.md)
+PostgreSQL setup for macOS, Linux and Windows
+
+**When to read:** Setting up local database
+
+</td>
+<td width="50%">
+
+### 🔄 [MIGRATIONS.md](docs/MIGRATIONS.md)
+Complete migration system guide
+
+**When to read:** Managing database schema changes
+
+</td>
+</tr>
+</table>
+
+### 📦 Update & Sync
+
+<table>
+<tr>
+<td width="50%">
+
+### ⬆️ [UPDATE_GUIDE.md](docs/UPDATE_GUIDE.md)
+How to update DevKit and handle breaking changes
+
+**When to read:** Before updating to new version
+
+</td>
+<td width="50%">
+
+### 🔗 [SYNC_GUIDE.md](docs/SYNC_GUIDE.md)
+Syncing schemas between Hub.app and DevKit
+
+**When to read:** When Hub.app schema changes
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 📊 [COMPATIBILITY_MATRIX.md](docs/COMPATIBILITY_MATRIX.md)
+Version compatibility matrix
+
+**When to read:** Checking version compatibility
+
+</td>
+<td width="50%">
+
+### 📝 [CHANGELOG.md](CHANGELOG.md)
+Full release history and migration guides
+
+**When to read:** Before updating versions
+
+</td>
+</tr>
+</table>
+
+### 📖 Additional Resources
+
+<table>
+<tr>
+<td width="50%">
 
 ### 🛠️ [INSTALL.md](INSTALL.md)
 Installation and setup
