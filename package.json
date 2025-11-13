@@ -1,0 +1,32 @@
+{
+  "name": "@hubapp/devkit",
+  "version": "0.1.0",
+  "description": "Development kit for creating Hub.app modules in minutes",
+  "author": "E4Labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/e4labs-bcm/hub-modules-devkit.git"
+  },
+  "scripts": {
+    "sync:schema": "bash scripts/sync-schema.sh",
+    "sync:templates": "bash scripts/sync-templates.sh",
+    "sync:all": "npm run sync:schema && npm run sync:templates",
+    "check:compat": "bash scripts/check-compat.sh"
+  },
+  "hubApp": {
+    "min_version": "0.1.0",
+    "max_version": "0.x.x",
+    "recommended_version": "0.1.0",
+    "last_synced": "2025-11-13T19:02:36Z"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "hubapp",
+    "devkit",
+    "module",
+    "generator",
+    "crud",
+    "nextjs"
+  ]
+}
