@@ -8,11 +8,21 @@
     "type": "git",
     "url": "https://github.com/e4labs-bcm/hub-modules-devkit.git"
   },
+  "bin": {
+    "hubapp-devkit": "./cli.js",
+    "hubapp": "./cli.js"
+  },
   "scripts": {
+    "create:module": "node lib/create-module.js",
+    "install:module": "node lib/install-module.js",
     "sync:schema": "bash scripts/sync-schema.sh",
     "sync:templates": "bash scripts/sync-templates.sh",
     "sync:all": "npm run sync:schema && npm run sync:templates",
     "check:compat": "bash scripts/check-compat.sh"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0"
   },
   "hubApp": {
     "min_version": "0.1.0",
@@ -20,7 +30,6 @@
     "recommended_version": "0.1.0",
     "last_synced": "2025-11-13T19:02:36Z"
   },
-  "devDependencies": {},
   "keywords": [
     "hubapp",
     "devkit",
