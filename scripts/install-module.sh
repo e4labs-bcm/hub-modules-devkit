@@ -36,6 +36,10 @@ MODULE_TITLE="$2"
 MODULE_ICON="$3"
 TENANT_ID="${4:-}"  # Opcional
 
+# Sanitizar slug para SQL (hífens → underscores)
+# PostgreSQL/Prisma não aceitam hífens em nomes de tabelas
+MODULE_SLUG_SQL=$(echo "$MODULE_SLUG" | tr '-' '_')
+
 HUB_DIR="$(pwd)"
 
 # Verificar se estamos no diretório do Hub
@@ -261,8 +265,8 @@ export async function OPTIONS() {
 }
 ROUTE_EOF
 
-  # Substituir MODULE_SLUG no arquivo
-  sed -i.bak "s/MODULE_SLUG/$MODULE_SLUG/g" "$API_DIR/items/route.ts"
+  # Substituir MODULE_SLUG por MODULE_SLUG_SQL (sanitizado para Prisma)
+  sed -i.bak "s/MODULE_SLUG/$MODULE_SLUG_SQL/g" "$API_DIR/items/route.ts"
   rm "$API_DIR/items/route.ts.bak"
 
   # Criar route.ts para /items/:id
@@ -382,8 +386,8 @@ ROUTE_EOF
   mkdir -p "$API_DIR/items/[id]"
   mv "$API_DIR/items/[id]/route.ts" "$API_DIR/items/[id]/" 2>/dev/null || true
 
-  # Substituir MODULE_SLUG
-  sed -i.bak "s/MODULE_SLUG/$MODULE_SLUG/g" "$API_DIR/items/[id]/route.ts"
+  # Substituir MODULE_SLUG por MODULE_SLUG_SQL (sanitizado para Prisma)
+  sed -i.bak "s/MODULE_SLUG/$MODULE_SLUG_SQL/g" "$API_DIR/items/[id]/route.ts"
   rm "$API_DIR/items/[id]/route.ts.bak"
 
   print_success "API routes criadas em: $API_DIR"
@@ -398,8 +402,8 @@ print_step "4. Atualizando Prisma schema..."
 PRISMA_SCHEMA="$HUB_DIR/prisma/schema.prisma"
 
 # Verificar se model já existe
-if grep -q "model ${MODULE_SLUG}_items" "$PRISMA_SCHEMA"; then
-  print_warning "Model ${MODULE_SLUG}_items já existe no schema"
+if grep -q "model ${MODULE_SLUG_SQL}_items" "$PRISMA_SCHEMA"; then
+  print_warning "Model ${MODULE_SLUG_SQL}_items já existe no schema"
 else
   # Adicionar model no final do arquivo
   cat >> "$PRISMA_SCHEMA" << PRISMA_EOF
@@ -408,7 +412,7 @@ else
 // Módulo: $MODULE_TITLE
 // ============================================================================
 
-model ${MODULE_SLUG}_items {
+model ${MODULE_SLUG_SQL}_items {
   id         String   @id @default(uuid()) @db.Uuid
   tenant_id  String   @db.Uuid
   created_by String?  @db.Uuid
@@ -418,11 +422,11 @@ model ${MODULE_SLUG}_items {
   updated_at DateTime @default(now()) @db.Timestamptz(6)
 
   // Relações
-  perfis     perfis?  @relation(fields: [created_by], references: [id], name: "${MODULE_SLUG}_items_created_by")
+  perfis     perfis?  @relation(fields: [created_by], references: [id], name: "${MODULE_SLUG_SQL}_items_created_by")
 
   @@index([tenant_id])
   @@index([created_by])
-  @@map("${MODULE_SLUG}_items")
+  @@map("${MODULE_SLUG_SQL}_items")
 }
 PRISMA_EOF
 

@@ -51,6 +51,10 @@ MODULE_SLUG="$1"         # Ex: tarefas
 MODULE_TITLE="$2"        # Ex: "Tarefas"
 MODULE_ICON="${3:-Package}"  # Ex: ListTodo (default: Package)
 
+# Sanitizar slug para SQL (hífens → underscores)
+# PostgreSQL não aceita hífens em nomes de tabelas
+MODULE_SLUG_SQL=$(echo "$MODULE_SLUG" | tr '-' '_')  # Ex: teste-template → teste_template
+
 # Validar nome do módulo (apenas lowercase, números e hífens)
 if [[ ! "$MODULE_SLUG" =~ ^[a-z0-9-]+$ ]]; then
   print_error "Nome do módulo inválido. Use apenas letras minúsculas, números e hífens."
@@ -348,7 +352,7 @@ cat > "$MODULE_DIR/migrations/$(date +%Y%m%d)_${MODULE_SLUG}.sql" << EOF
 -- Data: $(date +%Y-%m-%d)
 
 -- Tabela principal
-CREATE TABLE IF NOT EXISTS ${MODULE_SLUG}_items (
+CREATE TABLE IF NOT EXISTS ${MODULE_SLUG_SQL}_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id UUID NOT NULL,
   created_by UUID,
@@ -359,14 +363,14 @@ CREATE TABLE IF NOT EXISTS ${MODULE_SLUG}_items (
 );
 
 -- Índices
-CREATE INDEX IF NOT EXISTS idx_${MODULE_SLUG}_items_tenant
-  ON ${MODULE_SLUG}_items(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_${MODULE_SLUG_SQL}_items_tenant
+  ON ${MODULE_SLUG_SQL}_items(tenant_id);
 
-CREATE INDEX IF NOT EXISTS idx_${MODULE_SLUG}_items_created_by
-  ON ${MODULE_SLUG}_items(created_by);
+CREATE INDEX IF NOT EXISTS idx_${MODULE_SLUG_SQL}_items_created_by
+  ON ${MODULE_SLUG_SQL}_items(created_by);
 
 -- Trigger para real-time (opcional)
-CREATE OR REPLACE FUNCTION notify_${MODULE_SLUG}_change()
+CREATE OR REPLACE FUNCTION notify_${MODULE_SLUG_SQL}_change()
 RETURNS TRIGGER AS \$\$
 BEGIN
   PERFORM pg_notify(
@@ -381,16 +385,16 @@ BEGIN
 END;
 \$\$ LANGUAGE plpgsql;
 
-CREATE TRIGGER ${MODULE_SLUG}_notify_trigger
-  AFTER INSERT OR UPDATE OR DELETE ON ${MODULE_SLUG}_items
-  FOR EACH ROW EXECUTE FUNCTION notify_${MODULE_SLUG}_change();
+CREATE TRIGGER ${MODULE_SLUG_SQL}_notify_trigger
+  AFTER INSERT OR UPDATE OR DELETE ON ${MODULE_SLUG_SQL}_items
+  FOR EACH ROW EXECUTE FUNCTION notify_${MODULE_SLUG_SQL}_change();
 
 -- RLS (Row Level Security) - Opcional
--- ALTER TABLE ${MODULE_SLUG}_items ENABLE ROW LEVEL SECURITY;
--- CREATE POLICY ${MODULE_SLUG}_tenant_isolation ON ${MODULE_SLUG}_items
+-- ALTER TABLE ${MODULE_SLUG_SQL}_items ENABLE ROW LEVEL SECURITY;
+-- CREATE POLICY ${MODULE_SLUG_SQL}_tenant_isolation ON ${MODULE_SLUG_SQL}_items
 --   USING (tenant_id = current_setting('app.current_tenant')::uuid);
 
-COMMENT ON TABLE ${MODULE_SLUG}_items IS 'Tabela principal do módulo $MODULE_TITLE';
+COMMENT ON TABLE ${MODULE_SLUG_SQL}_items IS 'Tabela principal do módulo $MODULE_TITLE';
 EOF
 
 print_success "Migration SQL criada"
