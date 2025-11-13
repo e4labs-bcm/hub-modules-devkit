@@ -389,6 +389,6 @@ git commit -m "docs: add <name> <type>"
 ---
 
 **Created by**: Agatha Fiuza + Claude Code
-**Philosophy**: "Make it work, make it right, make it fast - in that order."
+**Philosophy**: "Make it right, make it work, make it fast - in that order."
 **Last Updated**: Nov 13, 2025
 **Version**: 1.0.0
