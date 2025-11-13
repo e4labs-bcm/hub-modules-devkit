@@ -1,9 +1,9 @@
 # CLAUDE.md - Hub Modules DevKit
 
 **Projeto**: Kit de desenvolvimento para criar módulos do Hub.app
-**Status**: 🚧 **Em Implementação - Fases 1-3 Completas (25% concluído)**
+**Status**: 🚧 **Em Implementação - Fases 1-4 Completas (45% concluído)**
 **Repositório**: https://github.com/e4labs-bcm/hub-modules-devkit
-**Última Atualização**: 13/11/2025 - 15:15 UTC
+**Última Atualização**: 13/11/2025 - 16:00 UTC
 
 ---
 
@@ -185,32 +185,135 @@ bash scripts/migration-down.sh 001
 
 ---
 
-### **Fase 4: App.tsx Funcional** ⏸️ Pendente (2h30min) 🔴 CRÍTICO
+### **Fase 4: App.tsx Funcional** ✅ COMPLETA (2h30min) 🔴 CRÍTICO RESOLVIDO!
 
-**Objetivo**: Template com CRUD **REAL** (não mockado)
+**Commitado**: `baac89e` - 13/11/2025
 
-**Problema atual**: Template gera apenas:
-```tsx
-// App.tsx atual (66 linhas) - MOCKUP
-return (
-  <div>
-    <h1>Teste Template</h1>
-    <p>Bem-vindo! Agora você pode começar a desenvolver.</p>
-  </div>
-);
+**Objetivo**: Template com CRUD **REAL** (não mockado) - CONCLUÍDO! ✅
+
+**Transformação Realizada**:
+- **ANTES**: 66 linhas de mockup "Bem-vindo!"
+- **DEPOIS**: ~700 linhas de CRUD funcional + paginação + filtros
+
+**Templates Criados** (6 arquivos, 1030 linhas):
+
+1. [x] **templates/types/index.ts** (70 linhas) ✅
+   - Interface `Item` com campos padrão
+   - `CreateItemInput`, `UpdateItemInput`, `ItemFilters`
+   - `PaginatedResponse`, `RequestStatus`
+   - Comentários para customização fácil
+
+2. [x] **templates/hooks/useItems.ts** (270 linhas) ✅
+   - Custom hook com estado gerenciado
+   - `loadItems(filters)` - GET com paginação e busca
+   - `createItem(data)` - POST
+   - `updateItem(id, data)` - PUT
+   - `deleteItem(id)` - DELETE
+   - `refreshItems()` - Recarregar
+   - Estado local otimista (updates imediatos)
+   - Toast notifications automáticas
+   - Error handling completo
+
+3. [x] **templates/components/ItemList.tsx** (240 linhas) ✅
+   - **Desktop**: Tabela responsiva com todas as colunas
+   - **Mobile**: Cards otimizados
+   - Botões de ação (editar, deletar)
+   - Toggle ativo/inativo clicável
+   - Loading skeleton elegante
+   - Empty state com instruções
+   - Confirmação antes de deletar
+   - Delete loading state
+
+4. [x] **templates/components/ItemForm.tsx** (230 linhas) ✅
+   - Modal responsivo (criar/editar)
+   - Validação de formulário (nome obrigatório, max 255 chars)
+   - Modo criar vs editar automático
+   - Loading state durante submit
+   - Error handling com mensagens por campo
+   - Comentários para adicionar campos customizados
+   - Escape key para cancelar
+
+5. [x] **templates/App.tsx** (230 linhas) ✅
+   - Integração Hub Context via postMessage
+   - API configuration automática (apiUrl + apiToken)
+   - Header com contador de items
+   - Search bar funcional (Enter para buscar)
+   - Botões refresh e novo item
+   - Debug info (apenas em development)
+   - Loading/error states em todos os lugares
+   - Sticky header
+
+**Script Atualizado**:
+- [x] `scripts/create-module.sh` ✅
+  - Adicionado diretório `hooks/` na estrutura
+  - Função `copy_and_replace` atualizada com `MODULE_SLUG_SQL`
+  - Copia 5 templates funcionais automaticamente
+  - Removida geração inline antiga (66 linhas)
+
+**Features Incluídas no Template** (pronto para uso):
+- ✅ Listagem com paginação (50 items por página)
+- ✅ Busca por nome ou descrição (query string)
+- ✅ Criar item (modal com validação)
+- ✅ Editar item (modal pré-preenchido)
+- ✅ Deletar item (confirmação obrigatória)
+- ✅ Toggle ativo/inativo (otimista)
+- ✅ Responsive design (desktop + mobile)
+- ✅ Loading states (skeleton, spinners, disabled buttons)
+- ✅ Error handling (toast notifications)
+- ✅ Empty state com instruções
+- ✅ API integration ready (Hub postMessage)
+- ✅ TypeScript completo (zero `any`)
+- ✅ Comentários para customização fácil
+
+**Como Usar Agora**:
+```bash
+# Criar módulo (agora gera CRUD completo!)
+bash scripts/create-module.sh tarefas "Tarefas" ListTodo
+
+# Resultado:
+# packages/mod-tarefas/
+# ├── app/src/
+# │   ├── App.tsx           # ✅ CRUD funcional (230 linhas)
+# │   ├── types/index.ts    # ✅ Tipos (70 linhas)
+# │   ├── hooks/useItems.ts # ✅ Custom hook (270 linhas)
+# │   ├── components/
+# │   │   ├── ItemList.tsx  # ✅ Listagem (240 linhas)
+# │   │   └── ItemForm.tsx  # ✅ Formulário (230 linhas)
+# │   └── ...
+# └── ...
 ```
 
-**Meta**: Gerar template funcional (500+ linhas):
-```tsx
-// App.tsx funcional
-- ItemList.tsx (listagem com paginação)
-- ItemForm.tsx (criar/editar)
-- useItems.ts (CRUD hooks)
-- LoadingSpinner, EmptyState, ErrorBanner
-- Integração com apiAdapter.ts
+**Exemplo de Código Gerado**:
+```typescript
+// hooks/useItems.ts
+const { items, createItem, updateItem, deleteItem } = useItems({
+  apiUrl: 'http://localhost:3000',
+  apiToken: 'Bearer xyz...',
+  autoLoad: true
+});
+
+// Criar
+await createItem({ nome: 'Nova tarefa', ativo: true });
+
+// Editar
+await updateItem('id-123', { nome: 'Tarefa atualizada' });
+
+// Deletar
+await deleteItem('id-123');
 ```
 
-**Referência**: `packages/mod-financeiro/app/src/App.tsx` (1066 linhas)
+**Customização Fácil**:
+Todos os arquivos têm comentários `// ADICIONE SEUS CAMPOS PERSONALIZADOS AQUI` nos lugares certos:
+- `types/index.ts` - Adicionar campos na interface
+- `hooks/useItems.ts` - Adicionar filtros personalizados
+- `ItemForm.tsx` - Adicionar campos no formulário
+- `ItemList.tsx` - Adicionar colunas na tabela
+
+**Testado**:
+- ✅ Templates criados corretamente
+- ✅ Script atualizado sem erros
+- ✅ Commit e push bem-sucedidos
+- ⏳ Teste end-to-end pendente (criar módulo real e validar)
 
 ---
 
@@ -529,22 +632,22 @@ bash /path/to/hub-modules-devkit/scripts/install-module.sh tarefas "Tarefas" Lis
 ### **Ordem de Prioridade**:
 
 **🔴 Alta Prioridade** (essencial para produção):
-1. **Fase 4** - App.tsx funcional (CRUD real)
-2. **Fase 7** - Sincronização Hub↔DevKit
-3. **Fase 2** - Scripts de setup nativos (90% completo)
+1. **Fase 7** - Sincronização Hub↔DevKit (próxima recomendada)
+2. **Fase 2** - Scripts de setup nativos (90% completo - falta Linux/Windows)
 
 **🟡 Média Prioridade** (melhora experiência):
-4. **Fase 5** - Converter para Node.js
-5. **Fase 8** - Sistema de atualização
+3. **Fase 5** - Converter para Node.js (cross-platform)
+4. **Fase 8** - Sistema de atualização
 
 **🟢 Baixa Prioridade** (pode esperar):
-6. **Fase 6** - Context para Claude
-7. **Fase 9** - Documentação adicional
+5. **Fase 6** - Context para Claude
+6. **Fase 9** - Documentação adicional
 
-**✅ Completas**:
+**✅ Completas** (45% do projeto):
 - **Fase 1** - Bugs críticos ✅
 - **Fase 2** - Scripts de setup (90%) ✅
 - **Fase 3** - Sistema de migrations ✅
+- **Fase 4** - App.tsx funcional (CRUD real) ✅ 🔴 CRÍTICO RESOLVIDO!
 
 ---
 
@@ -575,6 +678,7 @@ bash /path/to/hub-modules-devkit/scripts/install-module.sh tarefas "Tarefas" Lis
 
 ## 🔄 **Histórico de Commits Importantes**
 
+- `baac89e` - feat: App.tsx Funcional com CRUD Completo (Fase 4) ✅ (13/11/2025) 🔴 CRÍTICO!
 - `cd51ac7` - feat: Sistema de Migrations Completo (Fase 3) ✅ (13/11/2025)
 - `9693f89` - feat: Scripts de Setup Nativos (Fase 2 - 90%) ✅ (13/11/2025)
 - `a8ec27f` - docs: Criar CLAUDE.md completo do projeto (13/11/2025)
@@ -585,6 +689,6 @@ bash /path/to/hub-modules-devkit/scripts/install-module.sh tarefas "Tarefas" Lis
 
 ---
 
-**Última Atualização**: 13/11/2025 - 15:15 UTC
-**Próxima Fase**: Fase 4 (App.tsx Funcional - CRÍTICO) 🔴
-**Progresso**: 25% completo (Fases 1-3 / 9)
+**Última Atualização**: 13/11/2025 - 16:00 UTC
+**Próxima Fase**: Fase 5 (Node.js) ou Fase 7 (Sincronização) - ambas importantes
+**Progresso**: 45% completo (Fases 1-4 / 9) - Crítico resolvido! ✅
