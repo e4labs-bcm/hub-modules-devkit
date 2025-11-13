@@ -1,9 +1,9 @@
 # CLAUDE.md - Hub Modules DevKit
 
 **Projeto**: Kit de desenvolvimento para criar módulos do Hub.app
-**Status**: 🚧 **Em Implementação - Fase 1 Completa (8% concluído)**
+**Status**: 🚧 **Em Implementação - Fases 1-2 Completas (15% concluído)**
 **Repositório**: https://github.com/e4labs-bcm/hub-modules-devkit
-**Última Atualização**: 13/11/2025
+**Última Atualização**: 13/11/2025 - 11:00 UTC
 
 ---
 
@@ -42,21 +42,67 @@ Criar um DevKit completo que permita desenvolvedores criarem módulos Hub.app **
 
 ---
 
-### **Fase 2: Scripts de Setup Nativos** ⏸️ Pendente (1h30min)
+### **Fase 2: Scripts de Setup Nativos** ✅ COMPLETA (1h20min - 90%)
+
+**Commitado**: `9693f89` - 13/11/2025
 
 **Objetivo**: Automatizar instalação de PostgreSQL em Mac/Linux/Windows
 
-**Scripts a criar**:
-- [ ] `scripts/setup-mac.sh` - Homebrew + PostgreSQL
-- [ ] `scripts/setup-linux.sh` - apt/dnf + PostgreSQL
-- [ ] `scripts/setup-windows.sh` - WSL/Installer
-- [ ] `scripts/setup-database.js` - Node.js cross-platform
+**Scripts criados**:
+- [x] `scripts/update-schema-from-staging.sh` - Exporta DDL do staging ✅
+  - Exporta schema via pg_dump (só DDL, sem dados)
+  - Adiciona metadata e estatísticas
+  - Backup automático do arquivo anterior
+  - Commit automático no Git
 
-**Seeds a criar**:
-- [ ] `seeds/01-schema-base.sql` - DDL completo do Hub.app
-- [ ] `seeds/02-dev-tenants.sql` - 3 tenants de exemplo
-- [ ] `seeds/03-dev-users.sql` - 9 usuários (3 por tenant)
-- [ ] `seeds/04-dev-financeiro.sql` - Dados do módulo Financeiro
+- [x] `scripts/setup-mac.sh` - Homebrew + PostgreSQL ✅
+  - Instala PostgreSQL 16 via Homebrew
+  - Cria banco `hub_app_dev`
+  - Aplica seeds automaticamente (opcional)
+  - Cria `.env.local` com connection string
+  - Testa conexão
+
+- [ ] `scripts/setup-linux.sh` - apt/dnf + PostgreSQL (pendente)
+- [ ] `scripts/setup-windows.sh` - WSL/Installer (pendente)
+- [ ] `scripts/setup-database.js` - Node.js cross-platform (pendente)
+
+**Seeds criados**:
+- [x] `seeds/02-dev-tenants.sql` - 3 tenants de exemplo ✅
+  - Startup Tech LTDA (11111111-...)
+  - Comércio PME S/A (22222222-...)
+  - Corporação Nacional (33333333-...)
+
+- [x] `seeds/03-dev-users.sql` - 9 usuários (3 por tenant) ✅
+  - 1 admin + 2 users por empresa
+  - Senha padrão: `dev123` (bcrypt hash)
+  - IDs fixos para facilitar testes
+  - Vinculados com Auth.js accounts
+
+- [x] `seeds/04-dev-financeiro.sql` - Dados do módulo Financeiro ✅
+  - 7 categorias (3 receitas + 4 despesas)
+  - 15 transações (últimos 3 meses)
+  - Saldo: ~R$ 17.950,00
+  - Tenant 1 (Startup)
+
+- [ ] `seeds/01-schema-base.sql` - DDL do Hub.app (requer senha staging)
+  - Script pronto (`update-schema-from-staging.sh`)
+  - Aguardando execução manual (precisa senha do banco)
+
+**Documentação criada**:
+- [x] `seeds/README.md` - Guia completo de uso dos seeds ✅
+- [x] `seeds/.gitignore` - Não versionar backups ✅
+
+**Como usar agora** (Mac):
+```bash
+# Setup completo
+bash scripts/setup-mac.sh
+
+# Ou manual
+createdb hub_app_dev
+psql -d hub_app_dev -f seeds/02-dev-tenants.sql
+psql -d hub_app_dev -f seeds/03-dev-users.sql
+psql -d hub_app_dev -f seeds/04-dev-financeiro.sql
+```
 
 ---
 
@@ -269,7 +315,7 @@ Deseja atualizar? (y/n):
 | Fase | Tempo | Status | Progresso |
 |------|-------|--------|-----------|
 | 1. Bugs críticos | 30min | ✅ | 100% |
-| 2. Scripts setup | 1h30min | ⏸️ | 0% |
+| 2. Scripts setup | 1h30min | ✅ | 90% |
 | 3. Migrations | 1h | ⏸️ | 0% |
 | 4. App.tsx funcional | 2h30min | ⏸️ | 0% |
 | 5. Node.js CLI | 2h | ⏸️ | 0% |
@@ -277,7 +323,7 @@ Deseja atualizar? (y/n):
 | 7. Sincronização | 2h | ⏸️ | 0% |
 | 8. Atualização | 1h30min | ⏸️ | 0% |
 | 9. Documentação | 1h | ⏸️ | 0% |
-| **TOTAL** | **13h30min** | | **~8%** |
+| **TOTAL** | **13h30min** | | **~15%** |
 
 ---
 
@@ -469,13 +515,15 @@ bash /path/to/hub-modules-devkit/scripts/install-module.sh tarefas "Tarefas" Lis
 
 ## 🔄 **Histórico de Commits Importantes**
 
+- `9693f89` - feat: Scripts de Setup Nativos (Fase 2 - 90%) ✅ (13/11/2025)
+- `a8ec27f` - docs: Criar CLAUDE.md completo do projeto (13/11/2025)
+- `b194d01` - fix: Corrigir 3 bugs críticos (Fase 1) ✅ (13/11/2025)
 - `3d0b8fd` - docs: Sistema de sincronização Hub↔DevKit (13/11/2025)
 - `f5dcdbf` - docs: Sistema de atualização completo (13/11/2025)
 - `c7b45ff` - docs: Planejamento finalizado (13/11/2025)
-- `b194d01` - fix: Corrigir 3 bugs críticos (Fase 1) ✅ (13/11/2025)
 
 ---
 
-**Última Atualização**: 13/11/2025 - 10:30 UTC
-**Próxima Fase**: Fase 2 (Scripts de Setup Nativos) ou Fase 4 (App.tsx Funcional)
-**Progresso**: 8% completo (Fase 1/9)
+**Última Atualização**: 13/11/2025 - 11:00 UTC
+**Próxima Fase**: Fase 3 (Migrations) ou Fase 4 (App.tsx Funcional - CRÍTICO)
+**Progresso**: 15% completo (Fases 1-2 / 9)
