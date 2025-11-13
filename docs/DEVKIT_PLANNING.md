@@ -861,9 +861,79 @@ Se houver PRD:
 
 ---
 
-### Fase 7: Sistema de Atualização Completo (1h 30min)
+### Fase 7: Sistema de Sincronização Hub.app ↔ DevKit (2h)
 
-**7.1 Comando `hub-devkit update`**
+**7.1 Comando `hub-devkit sync-schema`**
+```javascript
+// scripts/sync-schema.js
+async function syncSchema() {
+  // 1. Detecta hub-app-nextjs (lado a lado ou $HUB_APP_PATH)
+  // 2. Lê versão do Hub.app (migrations/manifest.json)
+  // 3. Compara com versão local (.schema-version)
+  // 4. Gera novo schema via Prisma migrate diff
+  // 5. Atualiza seeds/01-schema-base.sql
+  // 6. Registra versão sincronizada
+}
+```
+
+**7.2 Comando `hub-devkit sync-templates`**
+```javascript
+// scripts/sync-templates.js
+async function syncTemplates() {
+  // 1. Copia templates de API routes do Hub.app
+  // 2. Atualiza .api-version
+  // 3. Valida sintaxe TypeScript
+}
+```
+
+**7.3 Comando `hub-devkit sync-prisma`**
+```javascript
+// scripts/sync-prisma.js
+async function syncPrisma() {
+  // Opção A: Cria symlink (desenvolvimento)
+  // Opção B: Copia arquivo (produção)
+}
+```
+
+**7.4 Comando `hub-devkit check-compat`**
+```javascript
+// lib/check-compatibility.js
+async function checkCompatibility() {
+  // 1. Lê versões Hub.app e DevKit
+  // 2. Valida matriz de compatibilidade (package.json)
+  // 3. Avisa se incompatível
+  // 4. Sugere ações (update, sync-schema, etc)
+}
+```
+
+**7.5 Auto-check em todo comando**
+```javascript
+// cli.js (antes de QUALQUER comando)
+const { checkCompatibility } = require('./lib/check-compatibility');
+
+// Se Hub.app foi atualizado, detecta e sugere sync
+checkCompatibility().then(compatible => {
+  if (!compatible) {
+    console.log('⚠️  Executando sincronização automática...');
+    await syncSchema();
+    await syncTemplates();
+  }
+});
+```
+
+**7.6 CI/CD de Compatibilidade**
+```yaml
+# .github/workflows/compatibility.yml
+# Testa DevKit com múltiplas versões do Hub.app
+# - Hub v2.0.0, v2.5.0, main
+# - Cria módulo e valida funcionamento
+```
+
+---
+
+### Fase 8: Sistema de Atualização Completo (1h 30min)
+
+**8.1 Comando `hub-devkit update`**
 ```javascript
 // lib/update.js
 async function update() {
@@ -876,7 +946,7 @@ async function update() {
 }
 ```
 
-**7.2 Comando `hub-devkit rollback`**
+**8.2 Comando `hub-devkit rollback`**
 ```javascript
 // lib/rollback.js
 async function rollback() {
@@ -888,7 +958,7 @@ async function rollback() {
 }
 ```
 
-**7.3 Comando `hub-devkit check-updates`**
+**8.3 Comando `hub-devkit check-updates`**
 ```javascript
 // lib/check-updates.js
 async function checkUpdates() {
@@ -899,7 +969,7 @@ async function checkUpdates() {
 }
 ```
 
-**7.4 Auto-check em todo comando**
+**8.4 Auto-check em todo comando**
 ```javascript
 // cli.js (no início de TODOS os comandos)
 const { autoCheckUpdates } = require('./lib/check-updates');
@@ -912,7 +982,7 @@ autoCheckUpdates().then(hasUpdate => {
 });
 ```
 
-**7.5 CHANGELOG.md tracking**
+**8.5 CHANGELOG.md tracking**
 ```markdown
 # CHANGELOG.md
 
@@ -939,7 +1009,7 @@ hub-devkit create tasks "Tasks" ListTodo --type=crud
 ### Initial Release
 ```
 
-**7.6 package.json com version tracking**
+**8.6 package.json com version tracking**
 ```json
 {
   "name": "hub-modules-devkit",
@@ -953,14 +1023,16 @@ hub-devkit create tasks "Tasks" ListTodo --type=crud
 
 ---
 
-### Fase 8: Documentação (1h)
+### Fase 9: Documentação (1h)
 
-**8.1 DATABASE_SETUP.md**
-**8.2 MIGRATIONS.md**
-**8.3 DEPLOYMENT.md**
-**8.4 UPDATE_GUIDE.md** (novo!)
-**8.5 Atualizar README.md**
-**8.6 Atualizar QUICK_START.md**
+**9.1 DATABASE_SETUP.md**
+**9.2 MIGRATIONS.md**
+**9.3 DEPLOYMENT.md**
+**9.4 UPDATE_GUIDE.md**
+**9.5 SYNC_GUIDE.md** (novo!)
+**9.6 COMPATIBILITY_MATRIX.md** (novo!)
+**9.7 Atualizar README.md**
+**9.8 Atualizar QUICK_START.md**
 
 ---
 
@@ -974,9 +1046,10 @@ hub-devkit create tasks "Tasks" ListTodo --type=crud
 | 4 | App.tsx funcional | 2h 30min |
 | 5 | Converter para Node.js | 2h |
 | 6 | Context para Claude | 1h |
-| 7 | Sistema de atualização | 1h 30min |
-| 8 | Documentação | 1h |
-| **TOTAL** | | **~11h 30min** |
+| **7** | **Sistema de sincronização Hub↔DevKit** | **2h** |
+| 8 | Sistema de atualização | 1h 30min |
+| 9 | Documentação | 1h |
+| **TOTAL** | | **~13h 30min** |
 
 ---
 
