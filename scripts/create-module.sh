@@ -92,7 +92,7 @@ echo ""
 
 print_step "1. Criando estrutura de diretórios..."
 
-mkdir -p "$MODULE_DIR"/{adapter,app/src/{components,types,utils},migrations,docs}
+mkdir -p "$MODULE_DIR"/{adapter,app/src/{components,types,hooks,utils},migrations,docs}
 
 print_success "Diretórios criados"
 
@@ -109,16 +109,25 @@ copy_and_replace() {
 
   cat "$src" | \
     sed "s/MODULE_NAME/$MODULE_SLUG/g" | \
+    sed "s/MODULE_SLUG/$MODULE_SLUG/g" | \
+    sed "s/MODULE_SLUG_SQL/$MODULE_SLUG_SQL/g" | \
     sed "s/MODULE_TITLE/$MODULE_TITLE/g" | \
     sed "s/MODULE_ICON/$MODULE_ICON/g" \
     > "$dst"
 }
 
-# Copiar templates
+# Copiar templates básicos
 copy_and_replace "$DEVKIT_DIR/template/hubContext.ts" "$MODULE_DIR/app/src/hubContext.ts"
 copy_and_replace "$DEVKIT_DIR/template/apiAdapter.ts" "$MODULE_DIR/adapter/apiAdapter.ts"
 copy_and_replace "$DEVKIT_DIR/template/manifest.json" "$MODULE_DIR/manifest.json"
 copy_and_replace "$DEVKIT_DIR/template/package.json" "$MODULE_DIR/package.json"
+
+# Copiar templates funcionais (CRUD completo)
+copy_and_replace "$DEVKIT_DIR/templates/types/index.ts" "$MODULE_DIR/app/src/types/index.ts"
+copy_and_replace "$DEVKIT_DIR/templates/hooks/useItems.ts" "$MODULE_DIR/app/src/hooks/useItems.ts"
+copy_and_replace "$DEVKIT_DIR/templates/components/ItemList.tsx" "$MODULE_DIR/app/src/components/ItemList.tsx"
+copy_and_replace "$DEVKIT_DIR/templates/components/ItemForm.tsx" "$MODULE_DIR/app/src/components/ItemForm.tsx"
+copy_and_replace "$DEVKIT_DIR/templates/App.tsx" "$MODULE_DIR/app/src/App.tsx"
 
 # Ajustar package.json com nome correto
 sed -i.bak "s/@hubapp\/mod-MODULE_NAME/@hubapp\/mod-$MODULE_SLUG/g" "$MODULE_DIR/package.json"
@@ -150,75 +159,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 );
 EOF
 
-# App.tsx
-cat > "$MODULE_DIR/app/src/App.tsx" << EOF
-import { useEffect, useState } from 'react';
-import { Toaster } from 'sonner';
-import { getHubContext } from './hubContext';
-
-function App() {
-  const [context, setContext] = useState(getHubContext());
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Aguardar configuração do Hub
-    const timeout = setTimeout(() => {
-      const ctx = getHubContext();
-      if (ctx) {
-        setContext(ctx);
-        setLoading(false);
-      }
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, []);
-
-  if (loading || !context) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando módulo...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Toaster position="top-right" />
-
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">$MODULE_TITLE</h1>
-          <p className="text-sm text-gray-500">Tenant: {context.tenantId}</p>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium mb-4">Bem-vindo ao $MODULE_TITLE!</h2>
-          <p className="text-gray-600">
-            Seu módulo foi criado com sucesso. Agora você pode começar a desenvolver.
-          </p>
-
-          <div className="mt-4 p-4 bg-blue-50 rounded">
-            <h3 className="font-medium text-blue-900">Próximos passos:</h3>
-            <ol className="mt-2 space-y-1 text-sm text-blue-800">
-              <li>1. Edite este componente (app/src/App.tsx)</li>
-              <li>2. Crie suas API routes no Hub (/api/modules/$MODULE_SLUG)</li>
-              <li>3. Adicione suas tabelas no Prisma schema</li>
-              <li>4. Teste com: npm run dev</li>
-            </ol>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
-
-export default App;
-EOF
+# App.tsx já foi copiado do template (linha 130)
 
 # index.css
 cat > "$MODULE_DIR/app/src/index.css" << 'EOF'
