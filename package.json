@@ -21,8 +21,11 @@
     "check:compat": "bash scripts/check-compat.sh"
   },
   "dependencies": {
+    "@octokit/rest": "^20.0.2",
     "chalk": "^4.1.2",
-    "commander": "^11.1.0"
+    "commander": "^11.1.0",
+    "inquirer": "^8.2.5",
+    "semver": "^7.5.4"
   },
   "hubApp": {
     "min_version": "0.1.0",

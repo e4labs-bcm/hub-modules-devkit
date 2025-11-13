@@ -12,6 +12,9 @@ const packageJson = require('./package.json');
 // Import commands
 const createModule = require('./lib/create-module');
 const installModule = require('./lib/install-module');
+const { update } = require('./lib/update');
+const { rollback } = require('./lib/rollback');
+const { checkUpdates, autoCheckUpdates } = require('./lib/check-updates');
 
 // ============================================================================
 // CLI Configuration
@@ -57,6 +60,51 @@ program
   });
 
 /**
+ * update - Atualiza o DevKit para a versão mais recente
+ */
+program
+  .command('update')
+  .description('Atualiza o DevKit para a versão mais recente')
+  .action(async () => {
+    try {
+      await update();
+    } catch (error) {
+      console.error(chalk.red('✗'), `Erro: ${error.message}`);
+      process.exit(1);
+    }
+  });
+
+/**
+ * rollback - Volta para uma versão anterior
+ */
+program
+  .command('rollback')
+  .description('Faz rollback para uma versão anterior')
+  .action(async () => {
+    try {
+      await rollback();
+    } catch (error) {
+      console.error(chalk.red('✗'), `Erro: ${error.message}`);
+      process.exit(1);
+    }
+  });
+
+/**
+ * check-updates - Verifica se há atualizações disponíveis
+ */
+program
+  .command('check-updates')
+  .description('Verifica se há atualizações disponíveis')
+  .action(async () => {
+    try {
+      await checkUpdates(false);
+    } catch (error) {
+      console.error(chalk.red('✗'), `Erro: ${error.message}`);
+      process.exit(1);
+    }
+  });
+
+/**
  * help - Ajuda customizada
  */
 program.on('--help', () => {
@@ -76,6 +124,23 @@ program.on('--help', () => {
   console.log('Documentação:');
   console.log('  https://github.com/e4labs-bcm/hub-modules-devkit');
   console.log('');
+});
+
+// ============================================================================
+// Auto-check for updates (non-blocking, background)
+// ============================================================================
+
+// Executa auto-check de forma não bloqueante
+// Apenas notifica se há atualização disponível (1x por dia, cache 24h)
+setImmediate(async () => {
+  try {
+    const hasUpdate = await autoCheckUpdates();
+    if (hasUpdate) {
+      console.log(chalk.blue('\nℹ️  Nova versão disponível. Execute: hubapp-devkit update\n'));
+    }
+  } catch (error) {
+    // Fail silently - auto-check não deve quebrar o CLI
+  }
 });
 
 // ============================================================================

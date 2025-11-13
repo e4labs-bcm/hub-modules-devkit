@@ -32,6 +32,9 @@ tmp/
 temp/
 *.tmp
 
+# Update system cache
+.update-check-cache
+
 # Examples (se houver node_modules)
 examples/*/node_modules/
 examples/*/dist/
