@@ -1,9 +1,9 @@
 # CLAUDE.md - Hub Modules DevKit
 
 **Projeto**: Kit de desenvolvimento para criar módulos do Hub.app
-**Status**: 🚧 **Em Implementação - Fases 1-4, 7 Completas (60% concluído)**
+**Status**: 🚧 **Em Implementação - Fases 1-4, 7 Completas (70% concluído)**
 **Repositório**: https://github.com/e4labs-bcm/hub-modules-devkit
-**Última Atualização**: 13/11/2025 - 19:05 UTC
+**Última Atualização**: 13/11/2025 - 21:30 UTC
 
 ---
 
@@ -42,9 +42,9 @@ Criar um DevKit completo que permita desenvolvedores criarem módulos Hub.app **
 
 ---
 
-### **Fase 2: Scripts de Setup Nativos** ✅ COMPLETA (1h20min - 90%)
+### **Fase 2: Scripts de Setup Nativos** ✅ COMPLETA (2h10min - 100%)
 
-**Commitado**: `9693f89` - 13/11/2025
+**Commitado**: `96e7579` - 13/11/2025
 
 **Objetivo**: Automatizar instalação de PostgreSQL em Mac/Linux/Windows
 
@@ -62,9 +62,18 @@ Criar um DevKit completo que permita desenvolvedores criarem módulos Hub.app **
   - Cria `.env.local` com connection string
   - Testa conexão
 
-- [ ] `scripts/setup-linux.sh` - apt/dnf + PostgreSQL (pendente)
-- [ ] `scripts/setup-windows.sh` - WSL/Installer (pendente)
-- [ ] `scripts/setup-database.js` - Node.js cross-platform (pendente)
+- [x] `scripts/setup-linux.sh` - apt/dnf/pacman + PostgreSQL ✅
+  - Suporte a Ubuntu/Debian, Fedora/RHEL, Arch Linux
+  - Auto-detecção de distribuição
+  - Instalação PostgreSQL 16 via gerenciador de pacotes nativo
+  - Criação de usuário PostgreSQL sem senha para local
+  - Aplica seeds opcionalmente
+
+- [x] `scripts/setup-windows.ps1` - winget/Chocolatey + PostgreSQL ✅
+  - PowerShell com verificação de admin
+  - Instala winget ou Chocolatey automaticamente
+  - PostgreSQL 16 com configuração automática de PATH
+  - Aplica seeds opcionalmente
 
 **Seeds criados**:
 - [x] `seeds/02-dev-tenants.sql` - 3 tenants de exemplo ✅
@@ -91,13 +100,32 @@ Criar um DevKit completo que permita desenvolvedores criarem módulos Hub.app **
 **Documentação criada**:
 - [x] `seeds/README.md` - Guia completo de uso dos seeds ✅
 - [x] `seeds/.gitignore` - Não versionar backups ✅
+- [x] `docs/SETUP_GUIDE.md` - Guia completo multi-plataforma ✅
+  - Instruções detalhadas para macOS, Linux e Windows
+  - Comandos úteis por plataforma
+  - Troubleshooting completo
+  - Documentação de seeds e dados de teste
 
-**Como usar agora** (Mac):
+**Como usar agora**:
+
+**macOS**:
 ```bash
-# Setup completo
 bash scripts/setup-mac.sh
+```
 
-# Ou manual
+**Linux** (Ubuntu/Debian/Fedora/Arch):
+```bash
+bash scripts/setup-linux.sh
+```
+
+**Windows** (PowerShell como Administrador):
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force
+.\scripts\setup-windows.ps1
+```
+
+**Manual** (qualquer plataforma):
+```bash
 createdb hub_app_dev
 psql -d hub_app_dev -f seeds/02-dev-tenants.sql
 psql -d hub_app_dev -f seeds/03-dev-users.sql
