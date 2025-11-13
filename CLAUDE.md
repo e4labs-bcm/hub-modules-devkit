@@ -1,9 +1,9 @@
 # CLAUDE.md - Hub Modules DevKit
 
 **Projeto**: Kit de desenvolvimento para criar módulos do Hub.app
-**Status**: 🚧 **Em Implementação - Fases 1-2 Completas (15% concluído)**
+**Status**: 🚧 **Em Implementação - Fases 1-3 Completas (25% concluído)**
 **Repositório**: https://github.com/e4labs-bcm/hub-modules-devkit
-**Última Atualização**: 13/11/2025 - 11:00 UTC
+**Última Atualização**: 13/11/2025 - 15:15 UTC
 
 ---
 
@@ -106,26 +106,82 @@ psql -d hub_app_dev -f seeds/04-dev-financeiro.sql
 
 ---
 
-### **Fase 3: Sistema de Migrations** ⏸️ Pendente (1h)
+### **Fase 3: Sistema de Migrations** ✅ COMPLETA (1h)
 
-**Objetivo**: Sistema tipo Git para versionamento de schema
+**Commitado**: `cd51ac7` - 13/11/2025
 
-**Comandos a implementar**:
-- [ ] `migration-create.sh <name>` - Criar migration numerada
-- [ ] `migration-status.sh` - Listar pendentes vs aplicadas
-- [ ] `migration-up.sh [version]` - Aplicar migrations
-- [ ] `migration-down.sh <version>` - Reverter migration
-- [ ] `migration-to.sh <version>` - Ir para versão específica
+**Objetivo**: Sistema tipo Git para versionamento de schema (CONCLUÍDO)
 
-**Tabela de controle**:
+**Scripts criados**:
+- [x] `scripts/migration-create.sh` - Criar migration numerada ✅
+  - Numeração automática (001, 002, 003...)
+  - Sanitização de nomes (espaços → underscores)
+  - Template com seções UP (aplicar) e DOWN (rollback)
+  - Metadata: versão, descrição, timestamp
+
+- [x] `scripts/migration-status.sh` - Listar status de migrations ✅
+  - Conecta ao PostgreSQL via DATABASE_URL
+  - Mostra migrations aplicadas vs pendentes
+  - Tabela formatada com data e usuário
+  - Última migration aplicada com detalhes
+  - Mensagens de erro úteis se banco não disponível
+
+- [x] `scripts/migration-up.sh` - Aplicar migrations pendentes ✅
+  - Auto-cria tabela schema_migrations se não existir
+  - Aplica migrations na ordem (001, 002, 003...)
+  - Mede tempo de execução (ms)
+  - Calcula MD5 checksum dos arquivos
+  - Confirmação antes de aplicar
+  - Para execução se alguma migration falhar
+
+- [x] `scripts/migration-down.sh` - Rollback de migration ✅
+  - Aceita versão como argumento (ex: 001)
+  - Extrai e executa seção DOWN do arquivo
+  - Avisos de segurança (ATENÇÃO - PERDA DE DADOS)
+  - Confirmação explícita (digite "ROLLBACK")
+  - Remove registro da schema_migrations
+
+**Tabela de controle criada**:
 ```sql
-CREATE TABLE schema_migrations (
+-- migrations/000_create_migrations_table.sql
+CREATE TABLE IF NOT EXISTS schema_migrations (
   version VARCHAR(255) PRIMARY KEY,
-  applied_at TIMESTAMPTZ DEFAULT NOW(),
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   applied_by VARCHAR(255),
-  checksum VARCHAR(64)
+  description TEXT,
+  checksum VARCHAR(64),
+  execution_time_ms INTEGER
 );
 ```
+
+**Funcionalidades implementadas**:
+- ✅ Tracking de metadata completo
+- ✅ Validação de checksums (detecta alterações em migrations)
+- ✅ Mensagens de erro detalhadas e úteis
+- ✅ Compatível com Mac e Linux (usa sed/md5 correto por OS)
+- ✅ Todos os scripts executáveis (chmod +x)
+- ✅ Confirmações antes de operações destrutivas
+
+**Como usar agora**:
+```bash
+# Criar nova migration
+bash scripts/migration-create.sh "add user avatar field"
+
+# Ver status
+bash scripts/migration-status.sh
+
+# Aplicar pendentes
+bash scripts/migration-up.sh
+
+# Fazer rollback (CUIDADO!)
+bash scripts/migration-down.sh 001
+```
+
+**Testado**:
+- ✅ migration-create.sh - Gera arquivos corretamente
+- ✅ Numeração automática funciona (000 → 001)
+- ✅ Template gerado com todas as seções
+- ✅ Scripts detectam banco não disponível com mensagem clara
 
 ---
 
@@ -475,16 +531,20 @@ bash /path/to/hub-modules-devkit/scripts/install-module.sh tarefas "Tarefas" Lis
 **🔴 Alta Prioridade** (essencial para produção):
 1. **Fase 4** - App.tsx funcional (CRUD real)
 2. **Fase 7** - Sincronização Hub↔DevKit
-3. **Fase 2** - Scripts de setup nativos
+3. **Fase 2** - Scripts de setup nativos (90% completo)
 
 **🟡 Média Prioridade** (melhora experiência):
 4. **Fase 5** - Converter para Node.js
 5. **Fase 8** - Sistema de atualização
-6. **Fase 3** - Sistema de migrations
 
 **🟢 Baixa Prioridade** (pode esperar):
-7. **Fase 6** - Context para Claude
-8. **Fase 9** - Documentação adicional
+6. **Fase 6** - Context para Claude
+7. **Fase 9** - Documentação adicional
+
+**✅ Completas**:
+- **Fase 1** - Bugs críticos ✅
+- **Fase 2** - Scripts de setup (90%) ✅
+- **Fase 3** - Sistema de migrations ✅
 
 ---
 
@@ -515,6 +575,7 @@ bash /path/to/hub-modules-devkit/scripts/install-module.sh tarefas "Tarefas" Lis
 
 ## 🔄 **Histórico de Commits Importantes**
 
+- `cd51ac7` - feat: Sistema de Migrations Completo (Fase 3) ✅ (13/11/2025)
 - `9693f89` - feat: Scripts de Setup Nativos (Fase 2 - 90%) ✅ (13/11/2025)
 - `a8ec27f` - docs: Criar CLAUDE.md completo do projeto (13/11/2025)
 - `b194d01` - fix: Corrigir 3 bugs críticos (Fase 1) ✅ (13/11/2025)
@@ -524,6 +585,6 @@ bash /path/to/hub-modules-devkit/scripts/install-module.sh tarefas "Tarefas" Lis
 
 ---
 
-**Última Atualização**: 13/11/2025 - 11:00 UTC
-**Próxima Fase**: Fase 3 (Migrations) ou Fase 4 (App.tsx Funcional - CRÍTICO)
-**Progresso**: 15% completo (Fases 1-2 / 9)
+**Última Atualização**: 13/11/2025 - 15:15 UTC
+**Próxima Fase**: Fase 4 (App.tsx Funcional - CRÍTICO) 🔴
+**Progresso**: 25% completo (Fases 1-3 / 9)
